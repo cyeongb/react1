@@ -60,21 +60,6 @@ class App extends Component {
             mode:'welcome'
           }) 
           }.bind(this)}></Subject>
-           // onChangePage는 클릭했을 때 페이지가 바뀌도록 설정한것 
-           
-
-           
-        {/*<header>   
-          <h1><a href="#" onClick={function(e){
-            console.log(e);
-            e.preventDefault();            
-          //  this.state.mode='welcome';
-          this.setState({  
-            mode:'haesong'
-          })
-          }.bind(this)}>{this.state.subject.title}</a></h1> 
-          {this.state.subject.sub}
-        </header>*/}
         <Nav data={this.state.contents}></Nav>
         <Content title={_title} desc={_desc}></Content>
       </div>
