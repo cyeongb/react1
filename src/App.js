@@ -55,12 +55,15 @@ class App extends Component {
       <div className="App">
         
         <Subject title={this.state.subject.title}
-           sub={this.state.subject.sub}></Subject>
+           sub={this.state.subject.sub} onChangePage={function(){
+          this.setState({
+            mode:'welcome'
+          }) 
+          }.bind(this)}></Subject>
            // onChangePage는 클릭했을 때 페이지가 바뀌도록 설정한것 
-           onChangePage={function(){
-            alert('온 체인지 페이지')
+           
 
-           }.bind(this)}
+           
         {/*<header>   
           <h1><a href="#" onClick={function(e){
             console.log(e);
