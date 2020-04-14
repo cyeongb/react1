@@ -43,12 +43,9 @@ class App extends Component {
     if (this.state.mode === 'welcome') {
       _title=this.state.welcome.title;
       _desc=this.state.welcome.desc;
-    } else if (this.state.mode === "haesong") {
+    } else if (this.state.mode === "read") {
       _title=this.state.contents[0].title;
       _desc = this.state.contents[0].desc;
-    }else if(this.state.mode === "sora"){
-      _title=this.state.contents[1].title;
-      _desc = this.state.contents[1].desc;
     }
 
     return (
@@ -60,7 +57,11 @@ class App extends Component {
             mode:'welcome'
           }) 
           }.bind(this)}></Subject>
-        <Nav data={this.state.contents}></Nav>
+        <Nav onChangePage={function(){
+          alert('잘된다!')
+         
+          
+        }.bind(this)} data={this.state.contents}></Nav>
         <Content title={_title} desc={_desc}></Content>
       </div>
     );

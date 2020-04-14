@@ -6,7 +6,17 @@ class Nav extends Component {
     var data= this.props.data;   //이 값으로 글 목록을 생성한다
     var i=0;
     while(i<data.length){
-      lists.push(<li key={data[i].id}> <a href={"/content/"+data[i].id}>{data[i].title}</a></li>);
+      lists.push(
+        <li key={data[i].id}>
+         <a 
+            href={"/content/"+data[i].id}
+            onClick={function(e){
+              e.preventDefault();
+            }}
+            >{data[i].title}
+
+         </a>
+        </li>);
       i++;
     }
 
