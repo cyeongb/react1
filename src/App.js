@@ -12,6 +12,7 @@ class App extends Component {
     super(props);
     this.state = {
       mode: 'welcome', //welcome 페이지라는 표시
+      //selected_content_id:2,
       welcome: { title: "Welcome page", desc: "이건 웰컴 페이지" },
 
       subject: { title: "Your Choice", sub: "이건 state 거친 subject" },
@@ -44,8 +45,16 @@ class App extends Component {
       _title=this.state.welcome.title;
       _desc=this.state.welcome.desc;
     } else if (this.state.mode === "read") {
-      _title=this.state.contents[0].title;
-      _desc = this.state.contents[0].desc;
+      var i = 0;
+      while(i<this.state.contents.length){
+        var data = this.state.contents[i];
+        if(data.id === this.state.selected_content_id){
+          _title= data.title;
+          _desc = data.desc;
+          break;
+        }
+        i = i + 1;
+      }
     }
 
     return (
@@ -55,12 +64,16 @@ class App extends Component {
            sub={this.state.subject.sub} onChangePage={function(){
           this.setState({
             mode:'welcome'
-          }) 
+          }) ;
           }.bind(this)}></Subject>
-        <Nav onChangePage={function(){
-          alert('잘된다!')
-         
-          
+
+        <Nav 
+        onChangePage={function(id){  /* Nav에서 가져온 id라는 매개변수*/
+
+          this.setState({
+            mode : 'read',
+            selected_content_id:Number(id)  /*id가 문자로 넘어오기 떄문에 숫자로 변환해 준다. */
+          })
         }.bind(this)} data={this.state.contents}></Nav>
         <Content title={_title} desc={_desc}></Content>
       </div>

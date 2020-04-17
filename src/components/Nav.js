@@ -10,9 +10,11 @@ class Nav extends Component {
         <li key={data[i].id}>
          <a 
             href={"/content/"+data[i].id}
+            data-id = {data[i].id}
             onClick={function(e){
-              e.preventDefault();
-            }}
+              e.preventDefault();  /* 다른 페이지로 이동하지 않도록 제어*/
+              this.props.onChangePage(e.target.dataset.id);  /* e의 target은 a태그를 가리킨다.*/
+            }.bind(this)}
             >{data[i].title}
 
          </a>
