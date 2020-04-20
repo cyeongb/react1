@@ -2,6 +2,7 @@ import React, { Component } from "react";
 
 class Subject extends Component {
     render() {
+      console.log("-----Subject render()")
       //render는 func인데 class안에 소속된 func는 func을 생략한다.
       return (
         <header>        
