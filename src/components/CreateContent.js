@@ -3,6 +3,7 @@ import React, { Component } from "react";
 class CreateContent extends Component {
     render() {
       console.log("-----CreateContent render()")
+      console.log('현재 받아온 데이터:',this.props.data)
       return (
         <article>
         

@@ -6,6 +6,7 @@ import Subject from "./components/Subject";
 import ReadContent from "./components/ReadContent";
 import Control from "./components/Control";
 import CreateContent from "./components/CreateContent";
+import UpdateContent from "./components/UpdateContent ";
 
 class App extends Component {
   // ** render() 라는 함수보다 먼저 실행을 하면서 컴포넌트를 초기화 해주고 싶으면
@@ -13,9 +14,9 @@ class App extends Component {
   // 고로 젤 먼저 실행되고 초기화를 해 준다
   constructor(props) {
     super(props);
-    this.max_content_id=3;  //state바깥에 선언한 이유는 이 값이 데이터에 영향을 주지 않기떄문에 불합리한 렌더링을 피하기 위해서다.
+    this.max_content_id = 3; //state바깥에 선언한 이유는 이 값이 데이터에 영향을 주지 않기떄문에 불합리한 렌더링을 피하기 위해서다.
     this.state = {
-      mode: 'create', //welcome 페이지라는 표시
+      mode: "welcome", //welcome 페이지라는 표시
       //selected_content_id:2,
       welcome: { title: "Welcome page", desc: "이건 웰컴 페이지" },
 
@@ -43,61 +44,141 @@ class App extends Component {
     };
   }
 
-  render() {
-    var _desc,_title ,_article= null;
-    if (this.state.mode === 'welcome') {
-      _title=this.state.welcome.title;
-      _desc=this.state.welcome.desc;
-      _article = <ReadContent title={_title} desc={_desc}></ReadContent> ;
-    } else if (this.state.mode === "read") {
-      var i = 0;
-      while(i<this.state.contents.length){
-        var data = this.state.contents[i];
-        if(data.id === this.state.selected_content_id){
-          _title= data.title;
-          _desc = data.desc;
-          break;
-        }
-        i = i + 1;
+  // this.state.mode === "read" 일때
+  getReadContent() {
+    var i = 0;
+    while (i < this.state.contents.length) {
+      var data = this.state.contents[i];
+      if (data.id === this.state.selected_content_id) {
+        return data;
+        break;
       }
-      _article = <ReadContent title={_title} desc={_desc}></ReadContent>  // welcome, read 일때 사용한다.
-    }else if(this.state.mode === 'create'){
-      _article=<CreateContent onSubmit={function(_title,_desc){
-      this.max_content_id = this.max_content_id +1;
-     var _contents= this.state.contents.concat(
-      {id:this.max_content_id , title:_title , desc: _desc})
-      this.setState({
-        contents:_contents
-      });
-      alert('submit 성공!')
-      }.bind(this)}></CreateContent>
-    };
+      i = i + 1;
+    }
+  }
 
+  // _article 변수를 리턴한다.
+  getContent() {
+    var _desc,
+      _title,
+      _article = null;
+    if (this.state.mode === "welcome") {
+      _title = this.state.welcome.title;
+      _desc = this.state.welcome.desc;
+      _article = <ReadContent title={_title} desc={_desc}></ReadContent>;
+    } else if (this.state.mode === "read") {
+      var _content = this.getReadContent();
+      _article = (
+        <ReadContent title={_content.title} desc={_content.desc}></ReadContent>
+      );
+    } else if (this.state.mode === "create") {
+      _article = (
+        <CreateContent
+          onSubmit={function (_title, _desc) {
+            this.max_content_id = this.max_content_id + 1;
+
+            var _contents = Array.from(this.state.contents);
+            _contents.push({
+              id: this.max_content_id,
+              title: _title,
+              desc: _desc,
+            });
+
+            // var _contents = this.state.contents.concat({ //이걸 Array 로 위에 바꿈
+            //   id: this.max_content_id,
+            //   title: _title,
+            //   desc: _desc,
+            // });
+            this.setState({
+              contents: _contents,
+              mode :'read',
+              selected_content_id : this.max_content_id
+            });
+          }.bind(this)}
+        ></CreateContent>
+      );
+    } else if (this.state.mode === "update") {
+      _content = this.getReadContent(); //현재 내용을 가져옴
+      _article = (
+        <UpdateContent
+          data={_content}
+          onSubmit={function (_id, _title, _desc) {
+            var _contents = Array.from(this.state.contents); //this.state.contents를 복사한 새로운 객체를 생성해줌
+            var i = 0;
+            while (i < _contents.length) {
+              if (_contents[i].id === _id) {
+                //해당 컨텐트의 id값이 입력받은 id값과 동일하다면
+                _contents[i] = {
+                  id: _id,
+                  title: _title,
+                  desc: _desc,
+                };
+                break;
+              }
+              i = i + 1;
+            }
+            this.setState({
+              contents: _contents,
+              mode :'read'
+            });
+          }.bind(this)}
+        ></UpdateContent>
+      );
+    }
+    return _article;
+  }
+
+  render() {
     return (
       <div className="App">
-        
-        <Subject title={this.state.subject.title}
-           sub={this.state.subject.sub} onChangePage={function(){
-          this.setState({
-            mode:'welcome'
-          }) ;
-          }.bind(this)}></Subject>
+        <Subject
+          title={this.state.subject.title}
+          sub={this.state.subject.sub}
+          onChangePage={function () {
+            this.setState({
+              mode: "welcome",
+            });
+          }.bind(this)}
+        ></Subject>
 
-        <Nav 
-        onChangePage={function(id){  /* Nav에서 가져온 id라는 매개변수*/
-
-          this.setState({
-            mode : 'read',
-            selected_content_id:Number(id)  /*id가 문자로 넘어오기 떄문에 숫자로 변환해 준다. */
-          })
-        }.bind(this)} data={this.state.contents}></Nav>
-        <Control onChangeMode={function(_mode){  /* mode라는 인자에 현재 상태(mode)가 전달이 된다.*/
-          this.setState({
-            mode:_mode
-          })
-        }.bind(this)}></Control> 
-        {_article}  
-        {/* readContent 영역이 가변적으로 변할 수 있게끔 위의 변수 article로 선언해서 사용함.*/}
+        <Nav
+          onChangePage={function (id) {
+            this.setState({
+              mode: "read",
+              selected_content_id: Number(id),
+            });
+          }.bind(this)}
+          data={this.state.contents}
+        ></Nav>
+        <Control
+          onChangeMode={function (_mode) {
+            if(_mode ==='delete'){
+             if( window.confirm('정말 삭제하시겠습니까?')){
+               var _contents = Array.from(this.state.contents)
+               var i =0;
+               while(i<_contents.length){
+                if(_contents[i].id === this.state.selected_content_id){
+                  _contents.splice(i,1);   //splice 함수로 해당 id값부터 1개를 지우겠다는 뜻.
+                break;
+                }
+                i = i+1;
+               }
+               this.setState({
+                 mode :'welcome',
+                 contents : _contents
+               });
+               alert('deleted!')
+             }
+              
+            }else{
+              
+              this.setState({
+                mode: _mode,
+              });
+            }
+          }.bind(this)}
+        ></Control>
+        {this.getContent()}
       </div>
     );
   }
